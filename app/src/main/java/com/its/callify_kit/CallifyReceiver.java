@@ -1,25 +1,49 @@
 package com.its.callify_kit;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Handler;
+import android.telecom.Call;
+import android.telecom.CallScreeningService;
+import android.util.Log;
+import android.widget.Toast;
 
-public class CallifyReceiver extends BroadcastReceiver {
+import androidx.annotation.RequiresApi;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
+public class CallifyReceiver extends CallScreeningService {
     @Override
-    public void onReceive(Context context, Intent intent) {
-        TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        telephony.listen(new PhoneStateListener() {
-            @Override
-            public void onCallStateChanged(int state, String incomingNumber) {
-                super.onCallStateChanged(state, incomingNumber);
-                if (state == 0) {
-                    // Get Phone Number and Compare with Sender Number
-                }
-            }
-        }, PhoneStateListener.LISTEN_CALL_STATE);
+    public void onScreenCall(Call.Details details) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if(details.getCallDirection() == Call.Details.DIRECTION_INCOMING) {
+                CallResponse.Builder response = new CallResponse.Builder();
+                response.setDisallowCall(false);
+                response.setRejectCall(false);
+                response.setSilenceCall(false);
+                response.setSkipCallLog(false);
+                response.setSkipNotification(false);
+                details.getHandle();
+                respondToCall(details, response.build());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
+                        SharedPreferences sp = getSharedPreferences("callify", MODE_PRIVATE);
+                        String incomingNumber = sp.getString("senderNumber","");
+                        String extracted = String.valueOf(details.getHandle()).substring(incomingNumber.length()-1);
+
+
+                        if(extracted.equals(incomingNumber)){
+                            Intent i = new Intent(getApplicationContext(),Success.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            getApplicationContext().startActivity(i);
+                        }
+
+
+                    }
+                },2000);
+            }
+        }
     }
 }

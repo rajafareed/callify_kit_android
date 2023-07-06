@@ -39,8 +39,7 @@ public class CallifyService implements Permission {
 
     public void missCallVerification(String apiKey, String campaingID, String phoneNumber, Context ctx) {
         if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_CALL_LOG)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED ) {
            callifyCallBack.callback("PERMISSION_ERROR");
         } else {
 
