@@ -3,8 +3,6 @@
 Call OTP Verification Package. Simple and easiest way to verify your users through miss call api. You are required to put apiKey,campaingId and userNumber in order to use this package.
 To use this dependency [CallifyKit](https://www.its.com.pk). You need to get Api Key, CampaingID first, which you are going to use in this dependency.
 
-wallabag is available on the Google Play Store and F-Droid.
-
 
 ## Features
 
@@ -13,6 +11,5 @@ The android dependency lets you:
 
 
 ## Permissions
-- 
 - Full Network Access.
 - Read Call Logs.
